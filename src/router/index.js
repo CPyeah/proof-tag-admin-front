@@ -59,14 +59,14 @@ export const constantRoutes = [
     path: '/reservation',
     component: Layout,
     redirect: '/reservation/table',
-    name: '停车预约',
-    meta: { title: '停车预约', icon: 'el-icon-s-help' },
+    name: '验证码',
+    meta: { title: '验证码', icon: 'el-icon-s-help' },
     children: [
       {
         path: 'list',
-        name: '停车预约列表',
+        name: '验证码列表',
         component: () => import('@/views/reservation/index'),
-        meta: { title: '停车预约列表', icon: 'table' }
+        meta: { title: '验证码列表', icon: 'table' }
       }
       // ,
       // {

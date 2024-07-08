@@ -1,14 +1,16 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <!-- <el-input v-model="listQuery.title" placeholder="Title" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" /> -->
-      <el-select v-model="listQuery.factoryId" placeholder="选择厂区" clearable style="width: 130px" class="filter-item">
+      <el-input v-model="listQuery.cid" placeholder="CID" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.create_time" placeholder="yyyy-MM-dd" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      
+      <!-- <el-select v-model="listQuery.factoryId" placeholder="选择厂区" clearable style="width: 130px" class="filter-item">
         <el-option v-for="item in factoryIdOptions" :key="item.factoryId" :label="item.factoryName"
           :value="item.factoryId" />
       </el-select>
       <el-select v-model="listQuery.status" placeholder="预约状态" clearable class="filter-item" style="width: 130px">
         <el-option v-for="item in orderStatus" :key="item.key" :label="item.display_name" :value="item.key" />
-      </el-select>
+      </el-select> -->
       <!-- <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select> -->
@@ -25,62 +27,57 @@
         reviewer
       </el-checkbox> -->
     </div>
+    <div class="filter-container">
+      <el-input v-model="tagCount" placeholder="1～999" style="width: 200px;" class="filter-item" />
+      <!-- <el-select v-model="listQuery.factoryId" placeholder="选择厂区" clearable style="width: 130px" class="filter-item">
+        <el-option v-for="item in factoryIdOptions" :key="item.factoryId" :label="item.factoryName"
+          :value="item.factoryId" />
+      </el-select>
+      <el-select v-model="listQuery.status" placeholder="预约状态" clearable class="filter-item" style="width: 130px">
+        <el-option v-for="item in orderStatus" :key="item.key" :label="item.display_name" :value="item.key" />
+      </el-select> -->
+      <!-- <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
+        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
+      </el-select> -->
+      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="tagGenerate">
+        二维码标签生成
+      </el-button>
+    </div>
 
     <el-table :key="tableKey" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;"
       @sort-change="sortChange">
-      <!-- 预约单状态 -->
-      <el-table-column label="预约单状态" prop="reservationStatusName" align="center" width="80">
+      <!-- CID -->
+      <el-table-column label="CID" prop="cid" align="center" width="180">
         <template slot-scope="{row}">
-          <span>{{ row.reservationStatusName }}</span>
+          <span>{{ row.cid }}</span>
         </template>
       </el-table-column>
 
-      <!-- 预约厂区 -->
-      <el-table-column label="预约厂区" prop="factoryName" align="center" width="80">
+      <!-- 验证码 -->
+      <el-table-column label="验证码" prop="code" align="center" width="80">
         <template slot-scope="{row}">
-          <span>{{ row.factoryName }}</span>
+          <span>{{ row.code }}</span>
         </template>
       </el-table-column>
 
-      <!-- 预约时间 -->
-      <el-table-column label="预约时间" prop="reservationTime" align="center" width="170">
+      <!-- 二维码 -->
+      <el-table-column label="二维码" prop="qr_code" align="center" width="470">
         <template slot-scope="{row}">
-          <span>{{ row.appointmentStartTime }} ~ {{ row.appointmentEndTime }}</span>
+          <span>{{ row.qr_code }}</span>
         </template>
       </el-table-column>
 
-      <!-- 来访事由 -->
-      <el-table-column label="来访事由" prop="reservationEventName" align="center" width="80">
+      <!-- 已验证次数 -->
+      <el-table-column label="已验证次数" prop="check_count" align="center" width="80">
         <template slot-scope="{row}">
-          <span>{{ row.reservationEventName }}</span>
+          <span>{{ row.check_count }}</span>
         </template>
       </el-table-column>
 
-      <!-- 货物名称 -->
-      <el-table-column label="货物名称" prop="goodsName" align="center" width="80">
+      <!-- 创建时间 -->
+      <el-table-column label="创建时间" prop="create_time" align="center" width="280">
         <template slot-scope="{row}">
-          <span>{{ row.goodsName }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- 前往区域 -->
-      <el-table-column label="前往区域" prop="dockName" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.dockName }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- 供应商 -->
-      <el-table-column label="供应商" prop="supplierName" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.supplierName }}</span>
-        </template>
-      </el-table-column>
-
-      <!-- 车牌号 -->
-      <el-table-column label="车牌号" prop="licensePlate" align="center" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.licensePlate }}</span>
+          <span>{{ row.create_time }}</span>
         </template>
       </el-table-column>
 
@@ -125,9 +122,9 @@
         </template>
       </el-table-column>
     -->
-      <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
-        <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
+      <!-- <el-table-column label="操作" align="center" width="230" class-name="small-padding fixed-width">
+        <template slot-scope="{row,$index}"> -->
+          <!-- <el-button type="primary" size="mini" @click="handleUpdate(row)">
             详情
           </el-button>
           <el-button v-if="row.reservationStatus == 'QUEUEING'" size="mini" type="success" @click="inFactory(row)">
@@ -135,12 +132,12 @@
           </el-button>
           <el-button v-if="row.reservationStatus == 'IN_FACTORY'" size="mini" @click="outFactory(row)">
             出厂
-          </el-button>
+          </el-button> -->
           <!-- <el-button v-if="row.status!='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
             Delete
           </el-button> -->
-        </template>
-      </el-table-column>
+        <!-- </template>
+      </el-table-column> -->
     </el-table>
 
     <pagination v-show="total > 0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit"
@@ -274,7 +271,7 @@
 </template>
 
 <script>
-import { fetchList, fetchFactoryIdOptions, getImageBase64, auditPass, auditFallback, inFactory, outFactory, fetchPv, createArticle, updateArticle } from '@/api/reservation'
+import { fetchList, getImageBase64, tagGenerate, auditPass, auditFallback, inFactory, outFactory, fetchPv, createArticle, updateArticle } from '@/api/reservation'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -328,6 +325,7 @@ export default {
     return {
       tableKey: 0,
       list: null,
+      tagCount: null,
       total: 0,
       listLoading: true,
       listQuery: {
@@ -375,7 +373,7 @@ export default {
   },
   created() {
     this.getList()
-    this.getFactoryIdOptions()
+    // this.getFactoryIdOptions()
   },
   methods: {
     async getImage(fileId) {
@@ -394,20 +392,24 @@ export default {
     },
     getList() {
       this.listLoading = true
+      // if listQuery.create_time trim is blank, then set it to undefined
+      if (this.listQuery.create_time && this.listQuery.create_time.trim() === '') {
+        this.listQuery.create_time = undefined
+      }
       fetchList(this.listQuery).then(response => {
-        this.list = response.data.reservationDetailRespList
+        this.list = response.data.tag_list
         this.total = response.data.total
 
         // 对每个list组装图片URL
-        this.list.forEach(item => {
-          item.idCardFrontPhotoUrl = process.env.VUE_APP_BASE_API + '/reservation/getImage/' + item['idCardFrontPhotoFileId'] + '?_=' + new Date().getTime()
+        // this.list.forEach(item => {
+        //   item.idCardFrontPhotoUrl = process.env.VUE_APP_BASE_API + '/reservation/getImage/' + item['idCardFrontPhotoFileId'] + '?_=' + new Date().getTime()
 
-          // goodsListPhotoFileIdList
-          item.goodsListPhotoUrlList = item.goodsListPhotoFileIdList.map(fileId => {
-            return process.env.VUE_APP_BASE_API + '/reservation/getImage/' + fileId + '?_=' + new Date().getTime()
-          })
+        //   // goodsListPhotoFileIdList
+        //   item.goodsListPhotoUrlList = item.goodsListPhotoFileIdList.map(fileId => {
+        //     return process.env.VUE_APP_BASE_API + '/reservation/getImage/' + fileId + '?_=' + new Date().getTime()
+        //   })
 
-        })
+        // })
 
         this.listLoading = false
         // Just to simulate the time of the request
@@ -415,6 +417,32 @@ export default {
         //   this.listLoading = false
         // }, 1.5 * 1000)
       })
+    },
+    tagGenerate() {
+      if (!this.tagCount) {
+        this.$message({
+          message: '请输入生成数量',
+          type: 'warning'
+        })
+        return
+      }
+      // 1 ~ 999
+      if (this.tagCount < 1 || this.tagCount > 999) {
+        this.$message({
+          message: '请输入1~999之间的数字',
+          type: 'warning'
+        })
+        return
+      }
+      console.log(process.env.VUE_APP_BASE_API + '/batch-generate-qrcode/' + this.tagCount)
+      window.open(process.env.VUE_APP_BASE_API + '/batch-generate-qrcode/' + this.tagCount)
+      this.getList()
+      // tagGenerate(this.tagCount).then(() => {
+      //   // open download link
+      //   console.log(process.env.VUE_APP_BASE_API + '/batch-generate-qrcode/' + this.tagCount)
+      //   window.open(process.env.VUE_APP_BASE_API + '/batch-generate-qrcode/' + this.tagCount)
+      //   this.getList()
+      // })
     },
     auditPass(temp) {
       auditPass(temp.reservationId, temp.reason).then(() => {

@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">阿特斯车辆叫号系统</h3>
+        <h3 class="title">产品验证管理系统</h3>
       </div>
 
       <el-form-item prop="username">

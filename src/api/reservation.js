@@ -2,9 +2,16 @@ import request from '@/utils/request'
 
 export function fetchList(query) {
   return request({
-    url: '/reservation/page',
+    url: '/tag-page',
     method: 'post',
     data: query
+  })
+}
+
+export function tagGenerate(count) {
+  return request({
+    url: '/batch-generate-qrcode/' + count,
+    method: 'get'
   })
 }
 
